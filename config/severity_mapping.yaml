@@ -1,0 +1,45 @@
+severity_levels:
+  critical:
+    score: 10
+    color: "red"
+    description: "Critical security risk requiring immediate attention"
+    sla_days: 1
+    
+  high:
+    score: 7
+    color: "orange"
+    description: "High security risk requiring prompt attention"
+    sla_days: 7
+    
+  medium:
+    score: 4
+    color: "yellow"
+    description: "Medium security risk requiring planned remediation"
+    sla_days: 30
+    
+  low:
+    score: 1
+    color: "blue"
+    description: "Low security risk or best practice recommendation"
+    sla_days: 90
+    
+scoring:
+  pass_threshold: 80  # Overall compliance score needed to pass
+  critical_failure_threshold: 1  # Number of critical findings that constitute automatic failure
+  
+remediation_effort:
+  simple:
+    description: "Configuration change only"
+    estimated_hours: 1
+    
+  moderate:
+    description: "Multiple configuration changes or restart required"
+    estimated_hours: 4
+    
+  complex:
+    description: "Architecture changes or significant reconfiguration"
+    estimated_hours: 16
+    
+  extensive:
+    description: "Major system changes or reimplementation"
+    estimated_hours: 40

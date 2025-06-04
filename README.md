@@ -1,93 +1,180 @@
-# Splunk Audit
+# Splunk Security Compliance Checker
 
+A comprehensive security compliance checking tool for Splunk installations that validates configurations against FedRAMP, NIST 800-53, and industry security best practices.
 
+## Features
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/hackIDLE/fedramp/fedramp-testing-public/siem/splunk-audit.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/hackIDLE/fedramp/fedramp-testing-public/siem/splunk-audit/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- **Comprehensive Security Checks**: Over 30 security configuration checks across multiple categories
+- **Standards Compliance**: Validates against FedRAMP (Low, Moderate, High) and NIST 800-53 standards
+- **Multiple Report Formats**: Generate reports in JSON, HTML, CSV, or console output
+- **Severity-Based Findings**: Categorizes issues as Critical, High, Medium, or Low
+- **Actionable Remediation**: Provides specific remediation steps for each failed check
+- **Flexible Execution**: Run all checks or filter by specific control families
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+1. Clone the repository:
+```bash
+git clone https://gitlab.com/hackIDLE/fedramp/fedramp-testing-public/siem/splunk-audit.git
+cd splunk-audit
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Basic Scan
+```bash
+python splunk_compliance.py --host splunk.example.com --port 8089 --username admin
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Scan Specific Control Families
+```bash
+python splunk_compliance.py --host splunk.example.com --username admin --controls AC,AU,SC
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### Generate HTML Report
+```bash
+python splunk_compliance.py --host splunk.example.com --username admin \
+    --report-format html --output compliance_report.html
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Check Against Specific Standard
+```bash
+python splunk_compliance.py --host splunk.example.com --username admin \
+    --standard fedramp-high
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Skip SSL Verification (for testing only)
+```bash
+python splunk_compliance.py --host splunk.example.com --username admin \
+    --skip-ssl-verify
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Compliance Check Categories
+
+### 1. Authentication & Access Control (AC, IA)
+- Default admin account security
+- Service account management
+- Account lockout policies
+- Session timeout configuration
+- Multi-factor authentication
+- Password complexity requirements
+
+### 2. Audit & Logging (AU)
+- Audit logging enabled
+- Audit content requirements
+- Audit storage capacity
+- Audit log protection
+- Audit event generation
+
+### 3. Encryption & Data Protection (SC)
+- TLS/SSL configuration
+- Web interface HTTPS
+- Cipher suite strength
+- Data-at-rest encryption
+
+### 4. System Integrity (CM, SI)
+- Configuration backups
+- Secure configuration settings
+- Unnecessary features disabled
+- Splunk version compliance
+- Security patch status
+
+## Report Formats
+
+### Console Output (Default)
+Displays a summary and detailed findings grouped by severity in the terminal.
+
+### JSON Report
+Structured JSON output with metadata, summary statistics, and detailed results.
+
+### HTML Report
+Professional HTML report with color-coded severity levels and summary dashboard.
+
+### CSV Report
+Spreadsheet-compatible format for further analysis and tracking.
+
+## Compliance Standards
+
+### FedRAMP Low
+Basic security controls suitable for low-impact systems.
+
+### FedRAMP Moderate
+Enhanced security controls for moderate-impact systems (default).
+
+### FedRAMP High
+Stringent security controls for high-impact systems.
+
+### NIST 800-53
+Comprehensive security control catalog without FedRAMP tailoring.
+
+## Configuration Files
+
+### checks.yaml
+Defines all compliance checks with their properties:
+- NIST control mapping
+- Severity levels
+- Check logic
+- Expected values
+
+### severity_mapping.yaml
+Configures severity levels and scoring:
+- Severity scores
+- SLA requirements
+- Pass/fail thresholds
+
+## Exit Codes
+
+- `0`: All checks passed or score above threshold
+- `1`: Critical findings or score below threshold
+
+## Security Considerations
+
+- Credentials are never stored or logged
+- Read-only operations only
+- Supports token-based authentication
+- SSL/TLS verification by default
+
+## Extending the Tool
+
+To add new compliance checks:
+
+1. Add check definition to `config/checks.yaml`
+2. Implement check logic in appropriate module
+3. Update documentation
+
+## Troubleshooting
+
+### Connection Issues
+- Verify Splunk management port (default 8089)
+- Check firewall rules
+- Ensure user has appropriate permissions
+
+### Permission Errors
+- User needs admin or admin-equivalent role
+- Some checks require specific capabilities
+
+### SSL Certificate Errors
+- Use `--skip-ssl-verify` for self-signed certificates (testing only)
+- Import CA certificates for production use
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Submit a merge request
+
+## Support
+
+For issues and questions:
+- Create an issue in GitLab
+- Contact the security team

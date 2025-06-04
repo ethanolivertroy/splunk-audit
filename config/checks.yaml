@@ -1,0 +1,257 @@
+compliance_checks:
+  authentication:
+    AC-2-1:
+      name: "Default Admin Account"
+      description: "Ensure default admin account is disabled or password changed"
+      nist_control: "AC-2"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "critical"
+      check_type: "api"
+      api_endpoint: "/services/authentication/users/admin"
+      validation:
+        type: "password_changed"
+        
+    AC-2-2:
+      name: "Service Account Management"
+      description: "Ensure service accounts are properly managed and documented"
+      nist_control: "AC-2"
+      fedramp_baseline: ["moderate", "high"]
+      severity: "high"
+      check_type: "api"
+      api_endpoint: "/services/authentication/users"
+      validation:
+        type: "service_account_check"
+        
+    AC-7-1:
+      name: "Account Lockout Policy"
+      description: "Ensure account lockout is configured for failed login attempts"
+      nist_control: "AC-7"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "config"
+      config_file: "authentication.conf"
+      stanza: "splunk_auth"
+      settings:
+        lockoutAttempts:
+          required: true
+          min_value: 3
+          max_value: 5
+        lockoutDuration:
+          required: true
+          min_value: 900  # 15 minutes in seconds
+          
+    AC-11-1:
+      name: "Session Timeout"
+      description: "Ensure session timeout is configured appropriately"
+      nist_control: "AC-11"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "medium"
+      check_type: "config"
+      config_file: "web.conf"
+      stanza: "settings"
+      settings:
+        tools.sessions.timeout:
+          required: true
+          max_value: 15  # 15 minutes
+          
+    IA-2-1:
+      name: "Multi-Factor Authentication"
+      description: "Ensure MFA is enabled for administrative access"
+      nist_control: "IA-2(1)"
+      fedramp_baseline: ["moderate", "high"]
+      severity: "high"
+      check_type: "config"
+      config_file: "authentication.conf"
+      validation:
+        type: "mfa_enabled"
+        
+    IA-5-1:
+      name: "Password Complexity"
+      description: "Ensure password complexity requirements are enforced"
+      nist_control: "IA-5"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "config"
+      config_file: "authentication.conf"
+      stanza: "splunk_auth"
+      settings:
+        minPasswordLength:
+          required: true
+          min_value: 12
+        minPasswordUppercase:
+          required: true
+          min_value: 1
+        minPasswordLowercase:
+          required: true
+          min_value: 1
+        minPasswordDigit:
+          required: true
+          min_value: 1
+        minPasswordSpecial:
+          required: true
+          min_value: 1
+          
+  audit_logging:
+    AU-2-1:
+      name: "Audit Logging Enabled"
+      description: "Ensure audit logging is enabled and configured"
+      nist_control: "AU-2"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "critical"
+      check_type: "file_exists"
+      file_path: "$SPLUNK_HOME/var/log/splunk/audit.log"
+      
+    AU-3-1:
+      name: "Audit Content Requirements"
+      description: "Ensure audit logs contain required information"
+      nist_control: "AU-3"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "audit_content"
+      required_fields:
+        - timestamp
+        - user
+        - action
+        - object
+        - result
+        
+    AU-4-1:
+      name: "Audit Storage Capacity"
+      description: "Ensure adequate audit storage capacity"
+      nist_control: "AU-4"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "medium"
+      check_type: "config"
+      config_file: "indexes.conf"
+      stanza: "_audit"
+      settings:
+        maxTotalDataSizeMB:
+          required: true
+          min_value: 10240  # 10GB minimum
+          
+    AU-9-1:
+      name: "Audit Log Protection"
+      description: "Ensure audit logs are protected from unauthorized access"
+      nist_control: "AU-9"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "file_permissions"
+      file_path: "$SPLUNK_HOME/var/log/splunk/audit.log"
+      max_permissions: "640"
+      
+    AU-12-1:
+      name: "Audit Generation"
+      description: "Ensure all required events are being audited"
+      nist_control: "AU-12"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "api"
+      api_endpoint: "/services/admin/audit-index"
+      validation:
+        type: "audit_events_configured"
+        
+  encryption:
+    SC-8-1:
+      name: "TLS Configuration"
+      description: "Ensure TLS is properly configured for all communications"
+      nist_control: "SC-8"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "critical"
+      check_type: "config"
+      config_file: "server.conf"
+      stanza: "sslConfig"
+      settings:
+        enableSplunkdSSL:
+          required: true
+          expected_value: "true"
+        sslVersions:
+          required: true
+          expected_value: "tls1.2,tls1.3"
+          blacklist: ["ssl3", "tls1.0", "tls1.1"]
+          
+    SC-8-2:
+      name: "Web Interface TLS"
+      description: "Ensure web interface uses HTTPS"
+      nist_control: "SC-8"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "critical"
+      check_type: "config"
+      config_file: "web.conf"
+      stanza: "settings"
+      settings:
+        enableSplunkWebSSL:
+          required: true
+          expected_value: "true"
+        httpport:
+          required: false
+          expected_value: "disabled"
+          
+    SC-13-1:
+      name: "Cryptographic Protection"
+      description: "Ensure strong cryptographic algorithms are used"
+      nist_control: "SC-13"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "config"
+      config_file: "server.conf"
+      stanza: "sslConfig"
+      settings:
+        cipherSuite:
+          required: true
+          must_include: ["TLS_ECDHE", "TLS_RSA_WITH_AES"]
+          must_exclude: ["DES", "3DES", "RC4", "MD5"]
+          
+    SC-28-1:
+      name: "Data at Rest Encryption"
+      description: "Ensure indexes are encrypted at rest"
+      nist_control: "SC-28"
+      fedramp_baseline: ["moderate", "high"]
+      severity: "high"
+      check_type: "index_encryption"
+      validation:
+        type: "all_indexes_encrypted"
+        
+  system_integrity:
+    CM-2-1:
+      name: "Configuration Backup"
+      description: "Ensure configuration backups exist"
+      nist_control: "CM-2"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "medium"
+      check_type: "backup_exists"
+      
+    CM-6-1:
+      name: "Secure Configuration"
+      description: "Ensure security-relevant settings are configured"
+      nist_control: "CM-6"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "multiple_configs"
+      
+    CM-7-1:
+      name: "Unnecessary Features Disabled"
+      description: "Ensure unnecessary features and apps are disabled"
+      nist_control: "CM-7"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "medium"
+      check_type: "api"
+      api_endpoint: "/services/apps/local"
+      validation:
+        type: "unnecessary_apps_disabled"
+        
+    SI-2-1:
+      name: "Splunk Version"
+      description: "Ensure Splunk is running a supported version"
+      nist_control: "SI-2"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "high"
+      check_type: "version_check"
+      min_version: "8.2.0"
+      
+    SI-2-2:
+      name: "Security Patches"
+      description: "Ensure latest security patches are applied"
+      nist_control: "SI-2"
+      fedramp_baseline: ["low", "moderate", "high"]
+      severity: "critical"
+      check_type: "patch_check"

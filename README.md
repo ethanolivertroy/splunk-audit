@@ -1,5 +1,7 @@
 # Splunk Security Compliance Checker
 
+> **Project moved.** splunk-audit has been integrated into [Open Control Tools](https://github.com/ethanolivertroy/open-ctrl-tools).
+
 A comprehensive security compliance checking tool for Splunk installations that validates configurations against FedRAMP, NIST 800-53, and industry security best practices.
 
 ## Features
